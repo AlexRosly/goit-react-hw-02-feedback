@@ -2,6 +2,7 @@ import React from 'react';
 import FeedbackOptions from './FeedbackOptions';
 import Section from './Section';
 import Statistics from './Statistics';
+import Notification from './Notification';
 
 class FeedBack extends React.Component {
 
@@ -17,6 +18,7 @@ class FeedBack extends React.Component {
         }));
         this.countTotalFeedback();
         this.countPositiveFeedbackPercentage();
+        this.showMarkUp();
     };
 
     neutralFeedBack = () => {
@@ -25,7 +27,6 @@ class FeedBack extends React.Component {
         }));
         this.countTotalFeedback();
         this.countPositiveFeedbackPercentage();
-
     };
 
     negativeFeedBack = () => {
@@ -34,12 +35,11 @@ class FeedBack extends React.Component {
         }));
         this.countTotalFeedback();
         this.countPositiveFeedbackPercentage();
-
     };
 
     countTotalFeedback = () => {
         this.setState(prevState => ({
-            total:  prevState.bad + prevState.good+ prevState.neutral,
+            total: prevState.bad + prevState.good + prevState.neutral,
         }));
     };
     
@@ -50,37 +50,38 @@ class FeedBack extends React.Component {
         }));
     };
 
+    // hideMarkUp = () => {
+    //     this.setState(prevState => ({
+    //         visible: prevState.visible = false,
+    //     }));
+    // }
+
+    showMarkUp = () => {
+        this.setState(prevState => ({
+            visible: prevState.visible = true,
+        }))
+    }
+
     render() {
         return (
             <div>
-                <Section Section title="Please leave feedback">
-                {/* <h1>Please leave feedback</h1> */}
-                <FeedbackOptions
-                    positive={this.positiveFeebBBack}
-                    neutral={this.neutralFeedBack}
-                    negative={this.negativeFeedBack}
-                />
-                {/* <div>
-                    <Button type="button" onClick={this.positiveFeebBBack}>Good</Button>
-                    <Button type="button" onClick={this.neutralFeedBack}>Neutral</Button>
-                    <Button type="button" onClick={this.negativeFeedBack}>Bad</Button>
-                </div> */}
-                <Statistics
-                    good={this.state.good}
-                    neutral={this.state.neutral}
-                    bad={this.state.bad}
-                    total={this.state.total}
-                    positivePercentage={this.state.positive}
+                <Section title="Please leave feedback">
+                    <FeedbackOptions
+                        // option={this.showMarkUp}
+                        positive={this.positiveFeebBBack}
+                        neutral={this.neutralFeedBack}
+                        negative={this.negativeFeedBack}
                     />
-                    </Section>
-                {/* <div>
-                    <h2>Statistics</h2>
-                    <p>Good:<span>{this.state.good}</span></p>
-                    <p>Neutral:<span>{this.state.neutral}</span></p>
-                    <p>Bad:<span>{this.state.bad}</span></p>
-                    <p>Total:<span>{this.state.total}</span></p>
-                    <p>Positive feedback:<span>{this.state.positive}%</span></p>
-                </div> */}
+                    {this.state.visible && <Statistics
+                        title="Statistics"
+                        good={this.state.good}
+                        neutral={this.state.neutral}
+                        bad={this.state.bad}
+                        total={this.state.total}
+                        positivePercentage={this.state.positive}
+                    />}
+                </Section>
+                {!this.state.visible && <Notification message="No feedback given"></Notification>}
             </div>
         );
     }
