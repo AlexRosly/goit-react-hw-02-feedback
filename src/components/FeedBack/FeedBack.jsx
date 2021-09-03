@@ -1,8 +1,8 @@
 import React from 'react';
-import FeedbackOptions from './FeedbackOptions';
-import Section from './Section';
-import Statistics from './Statistics';
-import Notification from './Notification';
+import FeedbackOptions from '../FeedBackOptions/FeedBackOptions';
+import Section from '../Section/Section';
+import Statistics from '../Statistics/Statistics';
+import Notification from '../Notification/Notification';
 
 class FeedBack extends React.Component {
 
@@ -12,77 +12,48 @@ class FeedBack extends React.Component {
         bad: 0
     }
 
-    positiveFeebBBack = () => {
-        this.setState(prevState => ({
-            good: prevState.good + 1,
-        }));
-        this.countTotalFeedback();
-        this.countPositiveFeedbackPercentage();
-        this.showMarkUp();
-    };
-
-    neutralFeedBack = () => {
-        this.setState(prevState => ({
-            neutral: prevState.neutral + 1,
-        }));
-        this.countTotalFeedback();
-        this.countPositiveFeedbackPercentage();
-    };
-
-    negativeFeedBack = () => {
-        this.setState(prevState => ({
-            bad: prevState.bad + 1,
-        }));
-        this.countTotalFeedback();
-        this.countPositiveFeedbackPercentage();
-    };
-
     countTotalFeedback = () => {
-        this.setState(prevState => ({
-            total: prevState.bad + prevState.good + prevState.neutral,
-        }));
+        const { good, neutral, bad } = this.state;
+		const total = good + neutral + bad;
+		return total;
     };
-    
 
     countPositiveFeedbackPercentage = () => {
+        const total = this.countTotalFeedback();
+        const { good } = this.state;
+        const percentage = Math.round((good / total) * 100);
+        return percentage;
+    };
+
+    countFeedBack = (e) => {
+        const name = e.target.name;
         this.setState(prevState => ({
-            positive: Math.round((prevState.good / prevState.total) * 100),
+            [name]: prevState[name] + 1,
         }));
     };
 
-    // hideMarkUp = () => {
-    //     this.setState(prevState => ({
-    //         visible: prevState.visible = false,
-    //     }));
-    // }
-
-    showMarkUp = () => {
-        this.setState(prevState => ({
-            visible: prevState.visible = true,
-        }))
-    }
-
     render() {
+        const { good, neutral, bad } = this.state;
+        const total = this.countTotalFeedback();
+        const positive = this.countPositiveFeedbackPercentage();
+
         return (
-            <div>
+            <>
                 <Section title="Please leave feedback">
                     <FeedbackOptions
-                        // option={this.showMarkUp}
-                        positive={this.positiveFeebBBack}
-                        neutral={this.neutralFeedBack}
-                        negative={this.negativeFeedBack}
+                        option={['good', 'neutral', 'bad']}
+                        onLeaveFeedback={this.countFeedBack}
                     />
-                    {this.state.visible && <Statistics
+                    {total === 0 ? <Notification message="No feedback given"></Notification> : <Statistics
                         title="Statistics"
-                        good={this.state.good}
-                        neutral={this.state.neutral}
-                        bad={this.state.bad}
-                        total={this.state.total}
-                        positivePercentage={this.state.positive}
+                        good={good}
+                        neutral={neutral}
+                        bad={bad}
+                        total={total}
+                        positivePercentage={positive}
                     />}
                 </Section>
-                {!this.state.visible && <Notification message="No feedback given"></Notification>}
-            </div>
+            </>
         );
     }
 }
